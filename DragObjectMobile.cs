@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DragObjectMobile : MonoBehaviour
 {
-    private void Update 
+    private void Update()
     {
         if (Input.touchCount > 0) 
          {
