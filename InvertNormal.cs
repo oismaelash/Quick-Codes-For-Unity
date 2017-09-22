@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InvertNormalSphere : MonoBehaviour
+public class InvertNormal : MonoBehaviour
 {
 
 	// Use this for initialization
