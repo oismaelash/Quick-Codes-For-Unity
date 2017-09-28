@@ -8,7 +8,7 @@ public class Timer : MonoBehaviour
 
     void Update ()
     {
-        m_Timer += Time.deltatime;
+        m_Timer += Time.deltaTime;
         
         if(m_Timer >= m_TimeLimit)
         {
