@@ -5,9 +5,9 @@ using System;
 
 public class UnlockItemTime : MonoBehaviour
 {
-    DateTime m_Time = new DateTime();
+    private DateTime m_Time = new DateTime();
     [SerializeField] private float timeWait;
-    [SerializeField] private bool activeTime = false;
+    private bool activeTime = false;
 
     private void StartTimeNow() // Call when it's necessary for you.
     {
