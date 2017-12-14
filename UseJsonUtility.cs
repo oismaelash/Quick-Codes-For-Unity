@@ -27,19 +27,24 @@ public class UseJsonUtility : MonoBehaviour
                 print("==========================");
 
                 // FromJson
-                Player newPlayer = new Player();
-                newPlayer = JsonUtility.FromJson<Player>(dataAsJson);
-                print(newPlayer.Name);
+                Players newPlayer = JsonUtility.FromJson<Players>(dataAsJson);
+                print(newPlayer[0].Name);
 
                 print("==========================");
 
                 // ToJson
-                newPlayer.Name = "Ismael Nascimento";
+                newPlayer[0].Name = "Ismael Nascimento";
                 string newJson = JsonUtility.ToJson(newPlayer);
                 print("New json::\n " + newJson);
             }
         }
     }
+}
+
+[System.Serializable]
+public class Players
+{
+    public List<Player> players;
 }
 
 [System.Serializable]
