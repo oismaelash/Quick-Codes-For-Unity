@@ -4,8 +4,8 @@ using Vuforia;
 
 public class VuMarkEvent : MonoBehaviour
 {
-	public List<GameObject> m_ModelList;
-	public List<string> m_IdList;
+	[SerializeField] private List<GameObject> m_ModelList;
+	[SerializeField] private List<string> m_IdList;
 
 	private int modelN;
 	private VuMarkManager vuMarkManager;
