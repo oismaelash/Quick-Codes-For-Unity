@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Vuforia;
@@ -20,7 +21,7 @@ public class VuMarkEvent : MonoBehaviour
             model.SetActive (false);
     }
     
-	private string GetVuMarkID(VuMarkTarget vuMark)
+	private string GetStringVuMarkID(VuMarkTarget vuMark)
     {
 		switch (vuMark.InstanceId.DataType)
         {
@@ -35,22 +36,39 @@ public class VuMarkEvent : MonoBehaviour
         }
 	}
 
-	public void OnVuMarkDetected(VuMarkTarget target)
+    private int GetIntVuMarkID(VuMarkTarget vuMark)
     {
-		Debug.Log ("Detected ID: "+ GetVuMarkID(target));
+        switch (vuMark.InstanceId.DataType)
+        {
+            case InstanceIdType.BYTES:
+                return Convert.ToInt32(vuMark.InstanceId.HexStringValue);
+            case InstanceIdType.STRING:
+                return Convert.ToInt32(vuMark.InstanceId.StringValue);
+            case InstanceIdType.NUMERIC:
+                return Convert.ToInt32(vuMark.InstanceId.NumericValue);
+        }
+
+        return 404;
+    }
+
+    public void OnVuMarkDetected(VuMarkTarget target)
+    {
+		Debug.Log ("Detected ID: "+ GetIntVuMarkID(target));
+
         for (int i = 0; i < m_IdList.Count; i++) // Find and activate model by VuMark ID
         {
-            if (int.Parse(m_IdList[i]) == int.Parse(GetVuMarkID (target)))
+            // if (m_IdList[i] == GetStringVuMarkID(target)) // When ID is type String
+            if (int.Parse(m_IdList[i]) == GetIntVuMarkID(target)) // When ID is type Int
             {
-				m_ModelList [i].SetActive (true);
-				modelN = i; // Set model number
+                m_ModelList[i].SetActive(true);
+                modelN = i; // Set model number
             }
-		}
+        }
 	}
 
 	public void OnVuMarkLost(VuMarkTarget target)
     {
-		Debug.Log ("Lost ID: "+ GetVuMarkID(target));
+		Debug.Log ("Lost ID: "+ GetIntVuMarkID(target));
 		m_ModelList [modelN].SetActive (false); // Deactivate model by model number
     }
 }
