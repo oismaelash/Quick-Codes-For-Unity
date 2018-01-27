@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 using Vuforia;
 
 public class VuMarkEvent : MonoBehaviour
@@ -17,8 +18,8 @@ public class VuMarkEvent : MonoBehaviour
         vuMarkManager.RegisterVuMarkDetectedCallback(OnVuMarkDetected); // Set VuMark detected
         vuMarkManager.RegisterVuMarkLostCallback(OnVuMarkLost); // Set VuMark Lost
 
-        foreach (var model in m_ModelList) // Deactivate all models 
-            model.SetActive (false);
+        //foreach (var model in m_ModelList) // Deactivate all models 
+        //    model.SetActive (false);
     }
     
 	private string GetStringVuMarkID(VuMarkTarget vuMark)
@@ -53,14 +54,17 @@ public class VuMarkEvent : MonoBehaviour
 
     public void OnVuMarkDetected(VuMarkTarget target)
     {
-		Debug.Log ("Detected ID: "+ GetIntVuMarkID(target));
+        Debug.Log("Detected ID: " + target.InstanceId);
 
         for (int i = 0; i < m_IdList.Count; i++) // Find and activate model by VuMark ID
         {
-            // if (m_IdList[i] == GetStringVuMarkID(target)) // When ID is type String
-            if (int.Parse(m_IdList[i]) == GetIntVuMarkID(target)) // When ID is type Int
+            //if (int.Parse(m_IdList[i]) == GetIntVuMarkID(target)) // When ID is type Int
+            if (m_IdList[i] == GetStringVuMarkID(target)) // When ID is type String
             {
-                m_ModelList[i].SetActive(true);
+                //m_ModelList[i].SetActive(true);
+                m_ModelList[i].GetComponent<StartVideoDynamicVuMark>().rendererVideo.SetActive(true);
+                m_ModelList[i].GetComponent<VideoPlayer>().Play();
+                m_ModelList[i].GetComponent<AudioSource>().Play();
                 modelN = i; // Set model number
             }
         }
@@ -68,7 +72,10 @@ public class VuMarkEvent : MonoBehaviour
 
 	public void OnVuMarkLost(VuMarkTarget target)
     {
-		Debug.Log ("Lost ID: "+ GetIntVuMarkID(target));
-		m_ModelList [modelN].SetActive (false); // Deactivate model by model number
+		Debug.Log ("Lost ID: "+ target.InstanceId);
+        //m_ModelList [modelN].SetActive (false); // Deactivate model by model number
+        m_ModelList[modelN].GetComponent<StartVideoDynamicVuMark>().rendererVideo.SetActive(false);
+        m_ModelList[modelN].GetComponent<VideoPlayer>().Pause();
+        m_ModelList[modelN].GetComponent<AudioSource>().Pause();
     }
 }
