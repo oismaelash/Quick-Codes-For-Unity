@@ -41,28 +41,37 @@ public class BufferVideoAR : MonoBehaviour
 
     private IEnumerator GetVideo_Coroutine(string ulrVideo)
     {
-        Debug.Log("Start get video");
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ulrVideo))
+        string nameVideo = ulrVideo.Split('/')[ulrVideo.Split('/').Length - 1];
+        string pathVideo = Path.Combine(GetPathVideos(), nameVideo);
+
+        if (IsVideoOnBuffer(pathVideo))
         {
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.isNetworkError)
+            Debug.Log("Video on buffer");
+            OnGetVideo?.Invoke(false, pathVideo);
+        }
+        else
+        {
+            Debug.Log("Start get video");
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(ulrVideo))
             {
-                Debug.LogError("GetVideo_Coroutine:: " + webRequest.error);
-                OnGetVideo?.Invoke(true, webRequest.error);
-            }
-            else
-            {
-                Debug.Log("GetVideo_Coroutine");
-                string nameVideo = ulrVideo.Split('/')[ulrVideo.Split('/').Length-1];
-                string pathVideo = Path.Combine(GetPathVideos(), nameVideo);
-                byte[] bytesVideo = webRequest.downloadHandler.data;
+                yield return webRequest.SendWebRequest();
 
-                if (!Directory.Exists(GetPathVideos()))
-                    Directory.CreateDirectory(GetPathVideos());
+                if (webRequest.isNetworkError)
+                {
+                    Debug.LogError("GetVideo_Coroutine:: " + webRequest.error);
+                    OnGetVideo?.Invoke(true, webRequest.error);
+                }
+                else
+                {
+                    Debug.Log("GetVideo_Coroutine");
+                    byte[] bytesVideo = webRequest.downloadHandler.data;
 
-                File.WriteAllBytes(pathVideo, bytesVideo);
-                OnGetVideo?.Invoke(false, pathVideo);
+                    if (!Directory.Exists(GetPathVideos()))
+                        Directory.CreateDirectory(GetPathVideos());
+
+                    File.WriteAllBytes(pathVideo, bytesVideo);
+                    OnGetVideo?.Invoke(false, pathVideo);
+                }
             }
         }
     }
@@ -85,5 +94,10 @@ public class BufferVideoAR : MonoBehaviour
     private string GetPathVideos()
     {
         return Path.Combine(Application.persistentDataPath, nameFolder);
+    }
+
+    private bool IsVideoOnBuffer(string pathVideo)
+    {
+        return File.Exists(pathVideo);
     }
 }
